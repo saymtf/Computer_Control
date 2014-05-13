@@ -1,0 +1,3 @@
+Version 3
+	 This will have the DND class and Timer class finished
+	 included with Sockets to connect to SmartLauncher
