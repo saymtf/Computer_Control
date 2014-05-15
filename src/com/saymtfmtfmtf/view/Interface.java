@@ -142,6 +142,10 @@ public class Interface extends JFrame implements Runnable {
 		rightBar.add(addTimeText);
 		rightBar.add(times);
 		
+
+		compMain.add(compScrollTable);
+		accMain.add(userScrollTable);
+		
 	// Main Screen
 		
 		tab.addTab("Computers", compMain); // Computer TAB
@@ -188,7 +192,7 @@ public class Interface extends JFrame implements Runnable {
 				
 			}else { // if its dnd
 				if(time.getTime() != null) {
-					compMain.remove(compScrollTable); // need to replace
+					//compMain.remove(compScrollTable); // need to replace
 					String currTime = time.getTime(); // current time
 					if(timeAdded == false) {
 						time.setEndTime("10"); // ***replace with the amount the user moved into.
@@ -205,8 +209,6 @@ public class Interface extends JFrame implements Runnable {
 				
 			}
 		}
-		compMain.add(compScrollTable);
-		accMain.add(userScrollTable);
 		compMain.validate();
 		//System.out.println("Time " + time.getTime());
 	}
