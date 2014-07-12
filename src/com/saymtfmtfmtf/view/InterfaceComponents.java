@@ -277,7 +277,7 @@ public class InterfaceComponents{
 	
 	public String[] getAccounts() {
 		
-		File file = new File("/Users/saymtfmtfmtf/Documents/workspace/SmartLauncherV3/acc.txt");
+		File file = new File("C:\\Users\\Thane\\Documents\\GitHub\\Computer_Control\\acc.txt");
 		try {
 			Scanner scnr = new Scanner(file);
 			while(scnr.hasNext()) {
