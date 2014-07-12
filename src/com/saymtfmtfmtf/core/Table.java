@@ -54,7 +54,7 @@ public class Table implements Runnable {
 	    
 	// Set DND
 	    jtable.setDragEnabled(true);
-	    jtable.setDropMode(DropMode.INSERT_COLS);
+	    jtable.setDropMode(DropMode.ON_OR_INSERT_COLS);
 	    jtable.setTransferHandler(new TableColumnTransferHandler(jtable));
 		
 	//Creates Scroll Table
@@ -75,7 +75,7 @@ public class Table implements Runnable {
 		        {"PC 002", "offline",
 		        	userType, time.getTime(), timeRemain.getTimeLeft(), time.getEndingTime()},
 		        {"PC 003", "offline",
-		        	"asdf", 12, timeRemain.getTimeLeft(), time.getEndingTime()}
+		        	userType, time.getTime(), timeRemain.getTimeLeft(), time.getEndingTime()}
 		    };
 		data = temp;
 		
@@ -86,12 +86,6 @@ public class Table implements Runnable {
 			table.setFillsViewportHeight(true);
 			table.setGridColor(new Color(150,150,150));
 
-			/*
-			jtable.setDragEnabled(true);
-			jtable.setDropMode(DropMode.INSERT_ROWS);
-			jtable.setTransferHandler(new TableColumnTransferHandler(jtable));	
-			*/
-		System.out.println("Table Run" ); // DEBUG
 		jtable = table; // replace old table with new
 		
 	}
@@ -110,7 +104,10 @@ public class Table implements Runnable {
 	 */
 	public void run() {
 		setJTable(); // resets the jtable
-		
+
+		jtable.setDragEnabled(false);
+		jtable.setDropMode(DropMode.ON_OR_INSERT_COLS);
+		jtable.setTransferHandler(new TableColumnTransferHandler(jtable));	
 		scroll = new JScrollPane(jtable); // sets the new scroll obj
 	}
 	

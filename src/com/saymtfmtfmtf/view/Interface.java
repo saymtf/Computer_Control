@@ -166,6 +166,7 @@ public class Interface extends JFrame implements Runnable {
 		//
 		//
 		// Computer Connection
+		
 		compMain.removeAll();
 		compMain.add(compScrollTable = table.compScroll());
 		compMain.revalidate();
