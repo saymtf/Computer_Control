@@ -53,10 +53,8 @@ public class Table implements Runnable {
 	    jtable.setGridColor(new Color(150,150,150));
 	    
 	// Set DND
-	    jtable.setDragEnabled(true);
-	    jtable.setDropMode(DropMode.ON_OR_INSERT_COLS);
 	    jtable.setTransferHandler(new TableColumnTransferHandler(jtable));
-		
+	    jtable.setDropMode(DropMode.ON_OR_INSERT);
 	//Creates Scroll Table
 		scroll = new JScrollPane(jtable);
 	}
@@ -118,30 +116,35 @@ public class Table implements Runnable {
 	/**
 	 * 
 	 * 
-	 * @author Thane
+	 * @class TransferHandler
 	 *
 	 */
 	@SuppressWarnings("serial")
-	public class TableColumnTransferHandler extends TransferHandler {
-		private final DataFlavor localObjectFlavor = new DataFlavor(Integer.class, "Integer Column Index");
+	protected class TableColumnTransferHandler extends TransferHandler {
 		private JTable table = null;
 		
 		
 		public TableColumnTransferHandler(JTable table) {
 			this.table = table;
 		}
-		
+		/*
 		@Override
 		protected Transferable createTransferable(JComponent c) {
 			assert(c == table);
 			return new DataHandler(new Integer(table.getSelectedRow()), localObjectFlavor.getMimeType());
 		}
-		
+		*/
 		@Override
 		public boolean canImport(TransferHandler.TransferSupport info) {
-			boolean b = info.getComponent() == table && info.isDrop() && info.isDataFlavorSupported(localObjectFlavor);
-			table.setCursor(b ? DragSource.DefaultMoveDrop : DragSource.DefaultMoveNoDrop);
-		    return b;
+			if(!info.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+				return false;
+			}
+			
+			JTable.DropLocation dl = (JTable.DropLocation)info.getDropLocation();
+			if(dl.getColumn() != 4) {
+				return false;
+			}
+			return true;
 		}
 		
 		@Override
@@ -153,7 +156,7 @@ public class Table implements Runnable {
 		public boolean importData(TransferHandler.TransferSupport info) {
 			JTable target = (JTable) info.getComponent();
 			JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
-			int index = dl.getRow();
+			int index = dl.getColumn();
 			int max = table.getModel().getRowCount();
 			
 			if(index < 0 || index > max) { index = max; }
@@ -161,10 +164,10 @@ public class Table implements Runnable {
 			target.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			
 			try {
-				Integer rowFrom = (Integer) info.getTransferable().getTransferData(localObjectFlavor);
-				if(rowFrom != -1 && rowFrom != index) {
-					((Reorderable)table.getModel()).reorder(rowFrom, index);
-					if(index > rowFrom) { index--; }
+				Integer colFrom = (Integer) info.getTransferable().getTransferData(DataFlavor.stringFlavor);
+				if(colFrom != -1 && colFrom != index) {
+					((Reorderable)table.getModel()).reorder(colFrom, index);
+					if(index > colFrom) { index--; }
 					target.getSelectionModel().addSelectionInterval(index, index);
 					return true;
 				}
