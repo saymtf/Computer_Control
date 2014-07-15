@@ -190,12 +190,14 @@ public class InterfaceComponents{
 	 * @return
 	 */
 	public JScrollPane timeLabel() {
+<<<<<<< HEAD
 		Integer[] times = {10, 15, 30, 45, 60, 90, 120};
+=======
+		String[] times = {"10 min", "15 min", "30 min", "45 min", "60 min", "90 min", "120 min"};
+>>>>>>> FETCH_HEAD
 		
 		JList list = new JList(times);
 		list.setDragEnabled(true);
-		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		list.setLayoutOrientation(JList.VERTICAL_WRAP);
 		list.setVisibleRowCount(-1);
 		list.setPreferredSize(new Dimension(248,1028));
 		JScrollPane scrollPane = new JScrollPane(list);
