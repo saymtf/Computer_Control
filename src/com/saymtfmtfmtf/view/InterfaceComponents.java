@@ -86,31 +86,7 @@ public class InterfaceComponents{
 		
 		return rightBar;
 	}
-
-	/**
-	 * 
-	 * 
-	 * @return
-	 */
-	/*
-	public JTable compTable() {
-		String[] header = { "PC", "Status", "User", "Start", "Time", "End" };
-		Object[][] data = {
-			        {"PC 001", "offline",
-			         "user", new String(""), new String(""), new String("")},
-			        {"PC 002", "offline",
-			         "user", new String(""), new String(""), new String("")},
-			        {"PC 003", "offline",
-			         "user", new String(""), new String(""), new String("")}
-			        };
-		final JTable table = new JTable(data, header);
-		table.setPreferredScrollableViewportSize(new Dimension(400, 32));
-	    table.setFillsViewportHeight(true);
-	    
-		table.setGridColor(new Color(150,150,150));
-		return table;
-	}
-	*/
+	
 	/**
 	 * 
 	 * @return
@@ -214,7 +190,7 @@ public class InterfaceComponents{
 	 * @return
 	 */
 	public JScrollPane timeLabel() {
-		String[] times = {"10 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour 0 Minutes", "1 Hour 30 Minutes", "2 Hour 0 Minutes", "Custom"};
+		Integer[] times = {10, 15, 30, 45, 60, 90, 120};
 		
 		JList list = new JList(times);
 		list.setDragEnabled(true);
@@ -277,7 +253,7 @@ public class InterfaceComponents{
 	
 	public String[] getAccounts() {
 		
-		File file = new File("/Users/saymtfmtfmtf/Documents/workspace/SmartLauncherV3/acc.txt");
+		File file = new File("C:\\Users\\Thane\\Documents\\GitHub\\Computer_Control\\acc.txt");
 		try {
 			Scanner scnr = new Scanner(file);
 			while(scnr.hasNext()) {
