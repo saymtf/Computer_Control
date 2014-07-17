@@ -52,6 +52,7 @@ public class Time implements Runnable{
 	 * @param endTime is the time thats going to modify to know when it's going to end.
 	 */
 	public void setEndTime(String endTime) {
+		
 		String[] a = time.split(":"); // split the current time
 		
 		int minTime = Integer.parseInt(time.split(":")[1])+Integer.parseInt(endTime); // change minute
