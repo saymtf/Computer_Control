@@ -157,6 +157,14 @@ public class Interface extends JFrame implements Runnable {
 		//
 		//
 		//
+<<<<<<< HEAD
+		// <<<<<<< HEAD
+		accMain.validate();
+		compMain.validate();
+		//System.out.println("Time " + time.getTime());
+
+=======
+>>>>>>> FETCH_HEAD
 		// Computer Connection
 		
 		compMain.removeAll();
