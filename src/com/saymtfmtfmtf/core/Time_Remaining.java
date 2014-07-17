@@ -18,11 +18,10 @@ public class Time_Remaining {
 	 */
 	public void setTimeLeft(String endTimer, String currentTime) {
 	// Setting the Hour/Minutes
-		
 		int endHour = Integer.parseInt(endTimer.split(":")[0]); // time to end
 		int currHour = Integer.parseInt(currentTime.split(":")[0]); // time Started
 		int hourLeft = 0; // init hoursLeft
-		
+
 		//Whether the hour is > or < endHour
 		if(currHour > endHour) {
 			hourLeft = (currHour - endHour)*60;
@@ -43,7 +42,6 @@ public class Time_Remaining {
 		}else {
 			timeLeft = hourLeft - (currMin - endMin);
 		}
-
 	}
 	
 	/**

@@ -43,7 +43,7 @@ public class Time implements Runnable{
 	}
 	
 	/**
-	 * This will split up the current time on the clock and add the amount of time so the user knows when it'll end..
+	 * This will split up the current time on the clock and add the AMOUNT of time the USER has so the user knows when it'll end..
 	 * Splitting all the :
 	 * Checking the Hours, Minutes then seconds so they're not over (60) and adding to the time
 	 * 
@@ -55,6 +55,7 @@ public class Time implements Runnable{
 		String[] a = time.split(":"); // split the current time
 		
 		int minTime = Integer.parseInt(time.split(":")[1])+Integer.parseInt(endTime); // change minute
+		
 		
 		if(minTime >= 60) { // if time becomes over 60 minutes
 			minTime -= 60; // subtract the hour

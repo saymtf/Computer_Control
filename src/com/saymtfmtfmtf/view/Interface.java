@@ -59,10 +59,8 @@ public class Interface extends JFrame implements Runnable {
 	private JTabbedPane tab;
 	private JTextField searchUser;
 	private JLabel addTimeText;
-	private Time_Remaining timeRemain;
-	private Time time;
 	
-	public Interface(Time time) { // Constructor
+	public Interface() { // Constructor
 		ic = new InterfaceComponents();
 	// JFRAME Needed Info
 		setName("Practice App");
@@ -76,8 +74,6 @@ public class Interface extends JFrame implements Runnable {
 		
 		
 	// Initializing
-		timeRemain = new Time_Remaining();
-		this.time = time; // pbr
 		table = new Table(); // constructor
 		rightBar = ic.sideBar();
 		actionBar = ic.actionBar();
@@ -96,10 +92,6 @@ public class Interface extends JFrame implements Runnable {
 		file = ic.menuFile();
 		edit = ic.menuEdit();
 		help = ic.menuHelp();
-		
-		
-
-		new Thread(this.time).start();
 		
 	//Set the menu bar and add the label to the content panel
 	
@@ -170,7 +162,6 @@ public class Interface extends JFrame implements Runnable {
 		compMain.removeAll();
 		compMain.add(compScrollTable = table.compScroll());
 		compMain.revalidate();
-		System.out.println("Time " + time.getTime());
 	}
 	
 	/**

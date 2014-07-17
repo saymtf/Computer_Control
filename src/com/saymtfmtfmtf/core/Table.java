@@ -3,9 +3,12 @@ package com.saymtfmtfmtf.core;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DragSource;
+import java.io.IOException;
 
 import javax.activation.DataHandler;
 import javax.swing.DropMode;
@@ -19,8 +22,8 @@ public class Table implements Runnable {
 	private Object[][] data;
 	private JTable jtable;
 	private JScrollPane scroll;
-	private Time time;
-	private Time_Remaining timeRemain;
+	protected Time[] time;
+	protected Time_Remaining[] timeRemain;
 	private String userType;
 	
 	/**
@@ -28,21 +31,24 @@ public class Table implements Runnable {
 	 * Creates a new JTable and JScroll
 	 */
 	public Table() {
-	
+		time = new Time[3];
+		timeRemain = new Time_Remaining[3];
 	// Set empty vars
-		time = new Time();
-		timeRemain = new Time_Remaining();
+		for(int i = 0; i < 3; i++) {
+			time[i] = new Time();
+			timeRemain[i] = new Time_Remaining();
+		}
 		userType = "";
-		
+	
 	// Create Initial Data Information
 		Object[][] data = {
-			        {"PC 001", "offline",
-			         userType, time.getTime(), timeRemain.getTimeLeft(), time.getEndingTime()},
-			        {"PC 002", "offline",
-			        	userType, time.getTime(), timeRemain.getTimeLeft(), time.getEndingTime()},
-			        {"PC 003", "offline",
-			        	userType, time.getTime(), timeRemain.getTimeLeft(), time.getEndingTime()}
-			    };
+		        {"PC 001", "offline",
+		         userType, time[0].getTime(), timeRemain[0].getTimeLeft(), time[0].getEndingTime()},
+		        {"PC 002", "offline",
+		        	userType, time[1].getTime(), timeRemain[1].getTimeLeft(), time[1].getEndingTime()},
+		        {"PC 003", "offline",
+		        	userType, time[2].getTime(), timeRemain[2].getTimeLeft(), time[2].getEndingTime()}
+		    };
 		this.data = data;
 		
 	// Creates Table
@@ -54,7 +60,6 @@ public class Table implements Runnable {
 	    
 	// Set DND
 	    jtable.setTransferHandler(new TableColumnTransferHandler(jtable));
-	    jtable.setDropMode(DropMode.ON_OR_INSERT);
 	//Creates Scroll Table
 		scroll = new JScrollPane(jtable);
 	}
@@ -63,17 +68,27 @@ public class Table implements Runnable {
 	 * Updates all the info in the table 
 	 */
 	public void setJTable() {
+		if(time[0].getEndingTime() != "None Set") {
+			new Thread(time[0]).start();
+
+			System.out.println(time[0].getTime());
+		}else if(time[1].getEndingTime() != "None Set") {
+			new Thread(time[1]).start();
+		}else if(time[2].getEndingTime() != "None Set") {
+			new Thread(time[2]).start();
+		}
+		
 		/*
 		 * Set An empty table
 		 * Replaces old data with temp
 		 */
 		Object[][] temp = {
 		        {"PC 001", "offline",
-		         userType, time.getTime(), timeRemain.getTimeLeft(), time.getEndingTime()},
+		         userType, time[0].getTime(), timeRemain[0].getTimeLeft(), time[0].getEndingTime()},
 		        {"PC 002", "offline",
-		        	userType, time.getTime(), timeRemain.getTimeLeft(), time.getEndingTime()},
+		        	userType, time[1].getTime(), timeRemain[1].getTimeLeft(), time[1].getEndingTime()},
 		        {"PC 003", "offline",
-		        	userType, time.getTime(), timeRemain.getTimeLeft(), time.getEndingTime()}
+		        	userType, time[2].getTime(), timeRemain[2].getTimeLeft(), time[2].getEndingTime()}
 		    };
 		data = temp;
 		
@@ -103,8 +118,6 @@ public class Table implements Runnable {
 	public void run() {
 		setJTable(); // resets the jtable
 
-		jtable.setDragEnabled(false);
-		jtable.setDropMode(DropMode.ON_OR_INSERT_COLS);
 		jtable.setTransferHandler(new TableColumnTransferHandler(jtable));	
 		scroll = new JScrollPane(jtable); // sets the new scroll obj
 	}
@@ -154,27 +167,44 @@ public class Table implements Runnable {
 		
 		@Override
 		public boolean importData(TransferHandler.TransferSupport info) {
-			JTable target = (JTable) info.getComponent();
-			JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
-			int index = dl.getColumn();
-			int max = table.getModel().getRowCount();
-			
-			if(index < 0 || index > max) { index = max; }
-			
-			target.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			
+			if(!canImport(info)) {
+					return false;
+			}
+			Transferable t = info.getTransferable();
 			try {
-				Integer colFrom = (Integer) info.getTransferable().getTransferData(DataFlavor.stringFlavor);
-				if(colFrom != -1 && colFrom != index) {
-					((Reorderable)table.getModel()).reorder(colFrom, index);
-					if(index > colFrom) { index--; }
-					target.getSelectionModel().addSelectionInterval(index, index);
-					return true;
+				String data = (String) t.getTransferData(DataFlavor.stringFlavor);
+				JTable.DropLocation tableLocation = (JTable.DropLocation) info.getDropLocation();
+				jtable.setDropMode(DropMode.USE_SELECTION);
+
+				
+				// The Row
+				int row = -1;
+				switch(tableLocation.getRow()) {
+					case 0: row = 0;
+						break;
+					case 1: row = 1;
+						break;
+					case 2: row = 2;
+						break;
+					default:
+						break;
 				}
-			} catch(Exception e) {
+				System.out.println(data + " " + row + " ");
+				
+				if(row != -1) {
+					time[row].setEndTime(data.substring(0, 3));
+				//timeRemain[row].setTimeLeft(data, time[row].getTime());
+				}
+				
+			} catch (UnsupportedFlavorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			return false;
+			
+			return true;
 		}
 		
 		@Override
