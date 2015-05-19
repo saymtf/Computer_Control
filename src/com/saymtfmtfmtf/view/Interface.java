@@ -177,17 +177,9 @@ public class Interface extends JFrame implements Runnable {
 		//
 		//
 		//
-<<<<<<< HEAD
-<<<<<<< HEAD
-		// <<<<<<< HEAD
 		accMain.validate();
 		compMain.validate();
 		//System.out.println("Time " + time.getTime());
-
-=======
->>>>>>> FETCH_HEAD
-=======
->>>>>>> parent of cf37021... New Update
 		// Computer Connection
 		boolean connection = true;
 		

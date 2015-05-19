@@ -214,20 +214,15 @@ public class InterfaceComponents{
 	 * @return
 	 */
 	public JScrollPane timeLabel() {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 		Integer[] times = {10, 15, 30, 45, 60, 90, 120};
-=======
+
+/*
 		String[] times = {"10 min", "15 min", "30 min", "45 min", "60 min", "90 min", "120 min"};
->>>>>>> FETCH_HEAD
-=======
+
 		String[] times = {"10 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour 0 Minutes", "1 Hour 30 Minutes", "2 Hour 0 Minutes", "Custom"};
->>>>>>> parent of cf37021... New Update
-=======
+
 		Integer[] times = {10, 15, 30, 45, 60, 90, 120};
->>>>>>> parent of b5bfb9f... DND Update
-		
+*/
 		JList list = new JList(times);
 		list.setDragEnabled(true);
 		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);

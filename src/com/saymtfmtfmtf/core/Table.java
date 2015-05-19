@@ -93,6 +93,13 @@ public class Table implements Runnable {
 		jtable = table; // replace old table with new
 		
 	}
+	
+	
+	public void setCompTable(String currTime, int timeLeft, String endTime, String user, int a) {
+		
+	}
+	
+	
 	/**
 	 * @return Allows user to retrieve the jtable
 	 */
