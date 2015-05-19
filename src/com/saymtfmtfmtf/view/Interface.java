@@ -50,8 +50,9 @@ public class Interface extends JFrame implements Runnable {
 	// VARS
 	private InterfaceComponents ic;
 	private Table table;
+	private int x, y;
 	private JPanel rightBar, actionBar, compMain, accMain;
-	private JTable userTable;
+	private JTable compTable, userTable;
 	private JScrollPane compScrollTable, userScrollTable, times;
 	private JMenuBar menuBar;
 	private JMenu file, edit, help;
@@ -61,6 +62,7 @@ public class Interface extends JFrame implements Runnable {
 	private JLabel addTimeText;
 	private Time_Remaining timeRemain;
 	private Time time;
+	private boolean timeAdded = false;
 	
 	public Interface(Time time) { // Constructor
 		ic = new InterfaceComponents();
@@ -74,6 +76,15 @@ public class Interface extends JFrame implements Runnable {
 
 		// Add content
 		
+	// Dragging 
+		addMouseMotionListener(new MouseMotionAdapter() {
+			public void mouseDragged(MouseEvent e) {
+				System.out.println("Dragged");
+				x = e.getX();
+				y = e.getY();
+				repaint();
+			}
+		});
 		
 	// Initializing
 		timeRemain = new Time_Remaining();
@@ -155,6 +166,7 @@ public class Interface extends JFrame implements Runnable {
 	 * 
 	 */
 	public void run() {
+
 		new Thread(table).start();
 		// I need to Check the computer table 
 			//Whether the time has changed (DnD)
@@ -166,6 +178,7 @@ public class Interface extends JFrame implements Runnable {
 		//
 		//
 <<<<<<< HEAD
+<<<<<<< HEAD
 		// <<<<<<< HEAD
 		accMain.validate();
 		compMain.validate();
@@ -173,12 +186,42 @@ public class Interface extends JFrame implements Runnable {
 
 =======
 >>>>>>> FETCH_HEAD
+=======
+>>>>>>> parent of cf37021... New Update
 		// Computer Connection
+		boolean connection = true;
 		
-		compMain.removeAll();
-		compMain.add(compScrollTable = table.compScroll());
-		compMain.revalidate();
-		System.out.println("Time " + time.getTime());
+		// Eligible to Drag and Drop time
+		if(connection) {
+			//enable transfer handle
+			
+			
+			// Update info to computer grid
+			int a = 3;
+			// if its acc
+			if(a == 2) { // find the specific location to add time and update
+				
+			}else { // if its dnd
+				if(time.getTime() != null) {
+					//compMain.remove(compScrollTable); // need to replace
+					String currTime = time.getTime(); // current time
+					if(timeAdded == false) {
+						time.setEndTime("10"); // ***replace with the amount the user moved into.
+						timeAdded = true;
+					}
+					String endTime = time.getEndingTime(); // the end time
+					timeRemain.setTimeLeft(endTime, currTime);
+					int timeLeft = timeRemain.getTimeLeft();
+					table.setCompTable(currTime, timeLeft, endTime, "guest", 1);
+					compScrollTable = table.compScroll();
+
+					//System.out.println("Time " + time.getTime());
+				}
+				
+			}
+		}
+		compMain.validate();
+		//System.out.println("Time " + time.getTime());
 	}
 	
 	/**
