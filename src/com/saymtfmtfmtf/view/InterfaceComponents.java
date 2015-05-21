@@ -204,7 +204,7 @@ public class InterfaceComponents{
 	 * @return
 	 */
 	public JButton addUser() {
-		JButton addUser = new JButton();
+		JButton addUser = new JButton("New User");
 		
 		return addUser;
 	}

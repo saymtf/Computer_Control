@@ -42,10 +42,10 @@ public class Main {
 	public static void main(String[] args) throws IOException{
 		ScheduledThreadPoolExecutor threadPoolExe = new ScheduledThreadPoolExecutor(5);
 
-		Time time = new Time();
-		Interface inter = new Interface(time);
+		//Time time = new Time(); // this was here to thread the times, but I removed it from the interface arguements
+		Interface inter = new Interface();
 		
-        threadPoolExe.scheduleWithFixedDelay(time, 1, 1, TimeUnit.SECONDS);
+        //threadPoolExe.scheduleWithFixedDelay(time, 1, 1, TimeUnit.SECONDS);
         threadPoolExe.scheduleWithFixedDelay(inter, 1, 1, TimeUnit.SECONDS);
         
         new Thread(inter).start();
