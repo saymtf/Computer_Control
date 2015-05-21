@@ -129,7 +129,6 @@ public class Table implements Runnable {
 	/**
 	 * 
 	 * 
-<<<<<<< HEAD
 	 * @author Thane
 	 *
 	 */
