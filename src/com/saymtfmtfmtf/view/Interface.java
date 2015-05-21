@@ -64,7 +64,7 @@ public class Interface extends JFrame implements Runnable {
 	private Time time;
 	private boolean timeAdded = false;
 	
-	public Interface(Time time) { // Constructor
+	public Interface() { // Constructor
 		ic = new InterfaceComponents();
 	// JFRAME Needed Info
 		setName("Practice App");
@@ -88,7 +88,7 @@ public class Interface extends JFrame implements Runnable {
 		
 	// Initializing
 		timeRemain = new Time_Remaining();
-		this.time = time; // pbr
+		this.time = new Time(); // pbr
 		table = new Table(); // constructor
 		rightBar = ic.sideBar();
 		actionBar = ic.actionBar();
@@ -110,7 +110,7 @@ public class Interface extends JFrame implements Runnable {
 		
 		
 
-		new Thread(this.time).start();
+		
 		
 	//Set the menu bar and add the label to the content panel
 	
@@ -166,7 +166,7 @@ public class Interface extends JFrame implements Runnable {
 	 * 
 	 */
 	public void run() {
-
+		new Thread(this.time).start();
 		new Thread(table).start();
 		// I need to Check the computer table 
 			//Whether the time has changed (DnD)

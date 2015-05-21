@@ -204,7 +204,7 @@ public class InterfaceComponents{
 	 * @return
 	 */
 	public JButton addUser() {
-		JButton addUser = new JButton();
+		JButton addUser = new JButton("New User");
 		
 		return addUser;
 	}
@@ -296,7 +296,7 @@ public class InterfaceComponents{
 			scnr.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Username Files Cannot be Found!");
 		}
 		
 		

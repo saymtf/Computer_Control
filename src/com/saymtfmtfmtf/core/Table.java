@@ -202,8 +202,7 @@ public class Table implements Runnable {
 			target.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			
 			try {
-
-				Integer colFrom = (Integer) info.getTransferable().getTransferData(DataFlavor.stringFlavor);
+				Integer colFrom = Integer.parseInt( (String) info.getTransferable().getTransferData(DataFlavor.stringFlavor));
 				if(colFrom != -1 && colFrom != index) {
 					((Reorderable)table.getModel()).reorder(colFrom, index);
 					if(index > colFrom) { index--; }
