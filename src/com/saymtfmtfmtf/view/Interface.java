@@ -36,10 +36,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
 import com.saymtfmtfmtf.core.*;
+import com.saymtfmtfmtf.snake.Snake;
 
 public class Interface extends JFrame implements Runnable {
 	/**
@@ -62,6 +65,7 @@ public class Interface extends JFrame implements Runnable {
 	private JLabel addTimeText;
 	private Time_Remaining timeRemain;
 	private Time time;
+	private String spellSnake;
 	private boolean timeAdded = false;
 	
 	public Interface() { // Constructor
@@ -73,7 +77,7 @@ public class Interface extends JFrame implements Runnable {
 		setEnabled(true);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		
 		// Add content
 		
 	// Dragging 
@@ -108,7 +112,7 @@ public class Interface extends JFrame implements Runnable {
 		edit = ic.menuEdit();
 		help = ic.menuHelp();
 		
-		
+		spellSnake = "";
 
 		
 		
@@ -181,6 +185,13 @@ public class Interface extends JFrame implements Runnable {
 		compMain.validate();
 		//System.out.println("Time " + time.getTime());
 		// Computer Connection
+		
+		if(spellSnake.equals("RollicksSnake")) {
+		       JFrame ex = new Snake();
+	           ex.setVisible(true);
+	           spellSnake = "";
+		}
+		
 		boolean connection = true;
 		
 		// Eligible to Drag and Drop time
@@ -250,11 +261,10 @@ public class Interface extends JFrame implements Runnable {
 			// TODO Auto-generated method stub
 			if(e.getSource() == searchUser || e.getSource() == searchButton) {
 				String text = searchUser.getText();
+				spellSnake = text;
 				System.out.println(text);
-			}
+			}	
 		}
 	}
-
-
 
 }

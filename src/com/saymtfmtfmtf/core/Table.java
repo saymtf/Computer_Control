@@ -195,13 +195,13 @@ public class Table implements Runnable {
 			int index = dl.getColumn();
 
 			int max = table.getModel().getRowCount();
-			
 			if(index < 0 || index > max) { index = max; }
 			
 			target.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			
 			try {
-				Integer colFrom = (Integer)info.getTransferable().getTransferData(DataFlavor.stringFlavor);
+				int colFrom = Integer.parseInt((String) info.getTransferable().getTransferData(DataFlavor.stringFlavor));
+				System.out.println(colFrom); // colFrom is the value from the right table.
 				if(colFrom != -1 && colFrom != index) {
 					((Reorderable)table.getModel()).reorder(colFrom, index);
 					if(index > colFrom) { index--; }
