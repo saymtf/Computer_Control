@@ -57,10 +57,6 @@ public class Table implements Runnable {
 	    jtable.setDropMode(DropMode.ON_OR_INSERT_COLS);
 	    jtable.setTransferHandler(new TableColumnTransferHandler(jtable));
 		
-	    // Conflict Merge 
-	    //jtable.setTransferHandler(new TableColumnTransferHandler(jtable));
-	    //jtable.setDropMode(DropMode.ON_OR_INSERT);
-
 	//Creates Scroll Table
 		scroll = new JScrollPane(jtable);
 	}
