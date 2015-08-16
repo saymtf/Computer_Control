@@ -7,6 +7,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DragSource;
 
+import javax.activation.ActivationDataFlavor;
 import javax.activation.DataHandler;
 import javax.swing.DropMode;
 import javax.swing.JComponent;
@@ -54,8 +55,8 @@ public class Table implements Runnable {
 	    
 	// Set DND
 	    jtable.setDragEnabled(true);
-	    jtable.setDropMode(DropMode.ON_OR_INSERT_COLS);
-	    jtable.setTransferHandler(new TableColumnTransferHandler(jtable));
+	    jtable.setDropMode(DropMode.INSERT_ROWS);
+	    jtable.setTransferHandler(new TableRowTransferHandler(jtable));
 		
 	//Creates Scroll Table
 		scroll = new JScrollPane(jtable);
@@ -112,9 +113,9 @@ public class Table implements Runnable {
 	public void run() {
 		setJTable(); // resets the jtable
 
-		jtable.setDragEnabled(false);
-		jtable.setDropMode(DropMode.ON_OR_INSERT_COLS);
-		jtable.setTransferHandler(new TableColumnTransferHandler(jtable));	
+		jtable.setDragEnabled(true);
+		jtable.setDropMode(DropMode.INSERT_ROWS);
+		jtable.setTransferHandler(new TableRowTransferHandler(jtable));	
 		scroll = new JScrollPane(jtable); // sets the new scroll obj
 	}
 	
@@ -129,94 +130,62 @@ public class Table implements Runnable {
 	 *
 	 */
 	@SuppressWarnings("serial")
-	public class TableColumnTransferHandler extends TransferHandler {
-		private final DataFlavor localObjectFlavor = new DataFlavor(Integer.class, "Integer Column Index");
+	public class TableRowTransferHandler extends TransferHandler {
+		private final DataFlavor localObjectFlavor = new ActivationDataFlavor(Integer.class, "Integer Row Index");
+		   private JTable           table             = null;
 
-		private JTable table = null;
-		
-		
-		public TableColumnTransferHandler(JTable table) {
-			this.table = table;
-		}
+		   public TableRowTransferHandler(JTable table) {
+		      this.table = table;
+		   }
 
-		/*
-		@Override
-		protected Transferable createTransferable(JComponent c) {
-			assert(c == table);
-			return new DataHandler(new Integer(table.getSelectedRow()), localObjectFlavor.getMimeType());
-		}
+		   @Override
+		   protected Transferable createTransferable(JComponent c) {
+		      assert (c == table);
+		      return new DataHandler(new Integer(table.getSelectedRow()), localObjectFlavor.getMimeType());
+		   }
 
-		
-		@Override
-		public boolean canImport(TransferHandler.TransferSupport info) {
-			boolean b = info.getComponent() == table && info.isDrop() && info.isDataFlavorSupported(localObjectFlavor);
-			table.setCursor(b ? DragSource.DefaultMoveDrop : DragSource.DefaultMoveNoDrop);
-		    return b;
-		}
-		
-		@Override
-		public int getSourceActions(JComponent C) {
-			return TransferHandler.COPY_OR_MOVE;
-		}
-		
-		@Override
-		public boolean importData(TransferHandler.TransferSupport info) {
-			JTable target = (JTable) info.getComponent();
-			JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
-			int index = dl.getRow();
+		   @Override
+		   public boolean canImport(TransferHandler.TransferSupport info) {
+		      boolean b = info.getComponent() == table && info.isDrop() && info.isDataFlavorSupported(localObjectFlavor);
+		      table.setCursor(b ? DragSource.DefaultMoveDrop : DragSource.DefaultMoveNoDrop);
+		      return b;
+		   }
 
-		*/
-		@Override
-		public boolean canImport(TransferHandler.TransferSupport info) {
-			if(!info.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-				return false;
-			}
-			
-			JTable.DropLocation dl = (JTable.DropLocation)info.getDropLocation();
-			if(dl.getColumn() != 4) {
-				return false;
-			}
-			return true;
-		}
-		
-		@Override
-		public int getSourceActions(JComponent C) {
-			return TransferHandler.COPY_OR_MOVE;
-		}
-		
-		@Override
-		public boolean importData(TransferHandler.TransferSupport info) {
-			JTable target = (JTable) info.getComponent();
-			JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
-			int index = dl.getColumn();
+		   @Override
+		   public int getSourceActions(JComponent c) {
+		      return TransferHandler.COPY_OR_MOVE;
+		   }
 
-			int max = table.getModel().getRowCount();
-			if(index < 0 || index > max) { index = max; }
-			
-			target.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			
-			try {
-				int colFrom = Integer.parseInt((String) info.getTransferable().getTransferData(DataFlavor.stringFlavor));
-				System.out.println(colFrom); // colFrom is the value from the right table.
-				if(colFrom != -1 && colFrom != index) {
-					((Reorderable)table.getModel()).reorder(colFrom, index);
-					if(index > colFrom) { index--; }
+		   @Override
+		   public boolean importData(TransferHandler.TransferSupport info) {
+		      JTable target = (JTable) info.getComponent();
+		      JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
+		      int index = dl.getRow();
+		      int max = table.getModel().getRowCount();
+		      if (index < 0 || index > max)
+		         index = max;
+		      target.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		      try {
+		         Integer rowFrom = (Integer) info.getTransferable().getTransferData(localObjectFlavor);
+		         if (rowFrom != -1 && rowFrom != index) {
+		            ((Reorderable)table.getModel()).reorder(rowFrom, index);
+		            if (index > rowFrom)
+		               index--;
+		            target.getSelectionModel().addSelectionInterval(index, index);
+		            return true;
+		         }
+		      } catch (Exception e) {
+		         e.printStackTrace();
+		      }
+		      return false;
+		   }
 
-					target.getSelectionModel().addSelectionInterval(index, index);
-					return true;
-				}
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-			return false;
-		}
-		
-		@Override
-		protected void exportDone(JComponent c, Transferable t, int act) {
-			if(act == TransferHandler.NONE) {
-				table.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			}
-		}
+		   @Override
+		   protected void exportDone(JComponent c, Transferable t, int act) {
+		      if ((act == TransferHandler.MOVE) || (act == TransferHandler.NONE)) {
+		         table.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		      }
+		   }
 	}
 	
 }
