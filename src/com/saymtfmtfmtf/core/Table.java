@@ -19,6 +19,7 @@ public class Table implements Runnable {
 	private String[] header = { "PC", "Status", "User", "Start", "Time", "End" };
 	private Object[][] data;
 	private JTable jtable;
+	private TableRowTransferHandler transferHandler;
 	private JScrollPane scroll;
 	private Time time;
 	private Time_Remaining timeRemain;
@@ -54,9 +55,10 @@ public class Table implements Runnable {
 	    jtable.setGridColor(new Color(150,150,150));
 	    
 	// Set DND
+		//transferHandler = new TableRowTransferHandler(jtable);
 	    jtable.setDragEnabled(true);
-	    jtable.setDropMode(DropMode.INSERT_ROWS);
-	    jtable.setTransferHandler(new TableRowTransferHandler(jtable));
+	    jtable.setDropMode(DropMode.INSERT_COLS);
+	    jtable.setTransferHandler(new TableRowTransferHandler(jtable)); 
 		
 	//Creates Scroll Table
 		scroll = new JScrollPane(jtable);
@@ -114,7 +116,7 @@ public class Table implements Runnable {
 		setJTable(); // resets the jtable
 
 		jtable.setDragEnabled(true);
-		jtable.setDropMode(DropMode.INSERT_ROWS);
+		jtable.setDropMode(DropMode.INSERT_COLS);
 		jtable.setTransferHandler(new TableRowTransferHandler(jtable));	
 		scroll = new JScrollPane(jtable); // sets the new scroll obj
 	}
@@ -131,7 +133,7 @@ public class Table implements Runnable {
 	 */
 	@SuppressWarnings("serial")
 	public class TableRowTransferHandler extends TransferHandler {
-		private final DataFlavor localObjectFlavor = new ActivationDataFlavor(Integer.class, "Integer Row Index");
+		private final DataFlavor localObjectFlavor = new ActivationDataFlavor(Integer.class, DataFlavor.javaJVMLocalObjectMimeType, "Integer Row Index");
 		   private JTable           table             = null;
 
 		   public TableRowTransferHandler(JTable table) {
@@ -141,7 +143,7 @@ public class Table implements Runnable {
 		   @Override
 		   protected Transferable createTransferable(JComponent c) {
 		      assert (c == table);
-		      return new DataHandler(new Integer(table.getSelectedRow()), localObjectFlavor.getMimeType());
+		      return new DataHandler(new Integer(table.getSelectedColumn()), localObjectFlavor.getMimeType());
 		   }
 
 		   @Override
@@ -153,21 +155,22 @@ public class Table implements Runnable {
 
 		   @Override
 		   public int getSourceActions(JComponent c) {
-		      return TransferHandler.COPY_OR_MOVE;
+		      return TransferHandler.COPY;
 		   }
 
 		   @Override
 		   public boolean importData(TransferHandler.TransferSupport info) {
 		      JTable target = (JTable) info.getComponent();
 		      JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
-		      int index = dl.getRow();
-		      int max = table.getModel().getRowCount();
+		      int index = dl.getColumn();
+		      int max = table.getModel().getColumnCount();
 		      if (index < 0 || index > max)
 		         index = max;
 		      target.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		      try {
 		         Integer rowFrom = (Integer) info.getTransferable().getTransferData(localObjectFlavor);
-		         if (rowFrom != -1 && rowFrom != index) {
+		         if (rowFrom == 4 && rowFrom < index) {
+		        	 System.out.println("PASSED");
 		            ((Reorderable)table.getModel()).reorder(rowFrom, index);
 		            if (index > rowFrom)
 		               index--;
