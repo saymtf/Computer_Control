@@ -5,7 +5,9 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DragSource;
+import java.io.IOException;
 
 import javax.activation.ActivationDataFlavor;
 import javax.activation.DataHandler;
@@ -14,17 +16,22 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.TransferHandler;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableModel;
 
-public class Table implements Runnable {
+public class Table implements Runnable{
 	private String[] header = { "PC", "Status", "User", "Start", "Time", "End" };
 	private Object[][] data;
 	private JTable jtable;
-	private TableRowTransferHandler transferHandler;
+	private TableModel dataModel;
 	private JScrollPane scroll;
 	private Time time;
 	private Time_Remaining timeRemain;
 	private String userType;
-	
+	private TableRowTransferHandler transferHandler = null;
 	/**
 	 * Sets all the member vals empty
 	 * Creates a new JTable and JScroll
@@ -48,17 +55,19 @@ public class Table implements Runnable {
 		this.data = data;
 		
 	// Creates Table
-		jtable = new JTable(data, header);
+
+		dataModel = new DefaultTableModel(data, header);
+		jtable = new JTable(dataModel);
 		jtable.setEnabled(false);
 		jtable.setPreferredScrollableViewportSize(new Dimension(400, 32));
 	    jtable.setFillsViewportHeight(true);
 	    jtable.setGridColor(new Color(150,150,150));
 	    
 	// Set DND
-		//transferHandler = new TableRowTransferHandler(jtable);
+		transferHandler = new TableRowTransferHandler(jtable);
 	    jtable.setDragEnabled(true);
 	    jtable.setDropMode(DropMode.INSERT_COLS);
-	    jtable.setTransferHandler(new TableRowTransferHandler(jtable)); 
+	    jtable.setTransferHandler(transferHandler); 
 		
 	//Creates Scroll Table
 		scroll = new JScrollPane(jtable);
@@ -117,14 +126,15 @@ public class Table implements Runnable {
 
 		jtable.setDragEnabled(true);
 		jtable.setDropMode(DropMode.INSERT_COLS);
-		jtable.setTransferHandler(new TableRowTransferHandler(jtable));	
+		jtable.setTransferHandler(transferHandler);	
 		scroll = new JScrollPane(jtable); // sets the new scroll obj
 	}
 	
 	public interface Reorderable {
 		   public void reorder(int fromIndex, int toIndex);
 	}
-
+	
+	
 	/**
 	 * 
 	 * 
@@ -133,9 +143,10 @@ public class Table implements Runnable {
 	 */
 	@SuppressWarnings("serial")
 	public class TableRowTransferHandler extends TransferHandler {
-		private final DataFlavor localObjectFlavor = new ActivationDataFlavor(Integer.class, DataFlavor.javaJVMLocalObjectMimeType, "Integer Row Index");
+		private final DataFlavor localObjectFlavor = new ActivationDataFlavor(Integer.class, "Integer Row Index");
 		   private JTable           table             = null;
-
+		   
+		   
 		   public TableRowTransferHandler(JTable table) {
 		      this.table = table;
 		   }
@@ -143,49 +154,74 @@ public class Table implements Runnable {
 		   @Override
 		   protected Transferable createTransferable(JComponent c) {
 		      assert (c == table);
-		      return new DataHandler(new Integer(table.getSelectedColumn()), localObjectFlavor.getMimeType());
+		      return new DataHandler(new Integer(table.getSelectedColumn()), DataFlavor.stringFlavor.getMimeType());
 		   }
 
 		   @Override
 		   public boolean canImport(TransferHandler.TransferSupport info) {
-		      boolean b = info.getComponent() == table && info.isDrop() && info.isDataFlavorSupported(localObjectFlavor);
-		      table.setCursor(b ? DragSource.DefaultMoveDrop : DragSource.DefaultMoveNoDrop);
+			  // Checks if it is a string, and makes sure the drop is only on Column 4 (Time)
+		      boolean b = info.isDataFlavorSupported(DataFlavor.stringFlavor) 
+		    		  && ((JTable.DropLocation)info.getDropLocation()).getColumn() == 4;
+		      
+		      //System.out.println("Is it FALSE: " + b);
+		      table.setCursor(b ? DragSource.DefaultCopyDrop : DragSource.DefaultCopyNoDrop);
 		      return b;
 		   }
 
 		   @Override
 		   public int getSourceActions(JComponent c) {
-		      return TransferHandler.COPY;
+		      return TransferHandler.COPY_OR_MOVE;
 		   }
 
 		   @Override
-		   public boolean importData(TransferHandler.TransferSupport info) {
-		      JTable target = (JTable) info.getComponent();
-		      JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
-		      int index = dl.getColumn();
-		      int max = table.getModel().getColumnCount();
-		      if (index < 0 || index > max)
-		         index = max;
-		      target.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		      try {
-		         Integer rowFrom = (Integer) info.getTransferable().getTransferData(localObjectFlavor);
-		         if (rowFrom == 4 && rowFrom < index) {
-		        	 System.out.println("PASSED");
-		            ((Reorderable)table.getModel()).reorder(rowFrom, index);
-		            if (index > rowFrom)
-		               index--;
-		            target.getSelectionModel().addSelectionInterval(index, index);
-		            return true;
-		         }
-		      } catch (Exception e) {
-		         e.printStackTrace();
-		      }
-		      return false;
+		   public boolean importData(TransferSupport info) {
+			   if (!info.isDrop()) { return false; }
+			   	
+			    //getDropLocation Returns the component of the drop
+		        JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
+		        int colIndex = dl.getColumn(); // the col of where user let go of mouse
+		        int rowIndex = dl.getRow(); // the row of where user let go of mouse
+		        
+//		        boolean insertCol = dl.isInsertColumn();
+//		        boolean insertRow = dl.isInsertRow();
+//				System.out.println(colIndex + " " + rowIndex + " " + insertCol + " " + insertRow);
+
+			   // To query the data from the drop
+			   Transferable t = info.getTransferable();
+			   try {
+				   // getTransferData gets the data's information and store it
+				   String data = (String) t.getTransferData(DataFlavor.stringFlavor);
+				   //System.out.println(data);
+				  
+				   // update the time in the table
+				   Integer val = (Integer) dataModel.getValueAt(rowIndex, colIndex);
+				   System.out.println(val);
+				   if(val == -1) {
+					   System.out.println("IF");
+						dataModel.setValueAt(data, rowIndex, colIndex);	
+				   }else {
+					   System.out.println("ELSE");
+					   int timeVal = Integer.parseInt(data);
+					  
+				   }
+				table.setModel(dataModel);
+				   table.setBackground(new Color(100,200,240));
+
+			        return true;
+			   } catch (UnsupportedFlavorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			   } catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			   }
 		   }
 
 		   @Override
 		   protected void exportDone(JComponent c, Transferable t, int act) {
-		      if ((act == TransferHandler.MOVE) || (act == TransferHandler.NONE)) {
+		      if ((act == TransferHandler.COPY) || (act == TransferHandler.NONE)) {
 		         table.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		      }
 		   }
