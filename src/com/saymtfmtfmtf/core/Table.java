@@ -42,15 +42,14 @@ public class Table implements Runnable{
 		time = new Time();
 		timeRemain = new Time_Remaining();
 		userType = "";
-		
 	// Create Initial Data Information
 		Object[][] data = {
 			        {"PC 001", "offline",
-			         userType, time.getTime(), timeRemain.getTimeLeft(), time.getEndingTime()},
+			         userType, "", timeRemain.getTimeLeft(), time.getEndingTime()},
 			        {"PC 002", "offline",
-			        	userType, time.getTime(), timeRemain.getTimeLeft(), time.getEndingTime()},
+			        	userType, "", timeRemain.getTimeLeft(), time.getEndingTime()},
 			        {"PC 003", "offline",
-			        	userType, time.getTime(), timeRemain.getTimeLeft(), time.getEndingTime()}
+			        	userType, "", timeRemain.getTimeLeft(), time.getEndingTime()}
 			    };
 		this.data = data;
 		
@@ -83,11 +82,11 @@ public class Table implements Runnable{
 		 */
 		Object[][] temp = {
 		        {"PC 001", "offline",
-		         userType, time.getTime(), timeRemain.getTimeLeft(), time.getEndingTime()},
+		         userType, time.getTime(), timeRemain.getTimeLeft(), ""},
 		        {"PC 002", "offline",
-		        	userType, time.getTime(), timeRemain.getTimeLeft(), time.getEndingTime()},
+		        	userType, time.getTime(), timeRemain.getTimeLeft(), ""},
 		        {"PC 003", "offline",
-		        	userType, time.getTime(), timeRemain.getTimeLeft(), time.getEndingTime()}
+		        	userType, time.getTime(), timeRemain.getTimeLeft(), ""}
 		    };
 		data = temp;
 		
@@ -118,17 +117,38 @@ public class Table implements Runnable{
 	 */
 	public JScrollPane compScroll() { return scroll; }
 	
+
+	public void updateTable() {
+		// currently static, change i < 3 when dynamically inputed through sockets. 
+		for(int i = 0; i < 1; i++) {
+			if((Integer) dataModel.getValueAt(i, 4) == -1) {
+				// need to get both start time and end time to calculate the time left
+				String endTime = (String) dataModel.getValueAt(i, 5); // end time
+
+				timeRemain.setTimeLeft(endTime, time.getTime());
+				int timeLeft = timeRemain.getTimeLeft();
+				dataModel.setValueAt(timeLeft, i, 4);	
+			}
+		}
+
+	}
+	
 	/**
 	 * Continuously runs to check for updates.
 	 */
 	public void run() {
 		setJTable(); // resets the jtable
 
+		time.run(); // gotta get that time
+		
 		jtable.setDragEnabled(true);
 		jtable.setDropMode(DropMode.INSERT_COLS);
 		jtable.setTransferHandler(transferHandler);	
 		scroll = new JScrollPane(jtable); // sets the new scroll obj
+		
+		updateTable();
 	}
+	
 	
 	public interface Reorderable {
 		   public void reorder(int fromIndex, int toIndex);
@@ -197,8 +217,12 @@ public class Table implements Runnable{
 				   Integer val = (Integer) dataModel.getValueAt(rowIndex, colIndex);
 				   System.out.println(val);
 				   if(val == -1) {
-					   System.out.println("IF");
-						dataModel.setValueAt(data, rowIndex, colIndex);	
+					   
+					   time.setEndTime(data); // get the time after (n) minutes 
+					   dataModel.setValueAt(time.getTime(), rowIndex, colIndex-1); // Start Time
+					   dataModel.setValueAt(data, rowIndex, colIndex);	
+					   dataModel.setValueAt(time.getEndingTime(), rowIndex, colIndex+1); // End Time
+					   
 				   }else {
 					   System.out.println("ELSE");
 					   int timeVal = Integer.parseInt(data);
