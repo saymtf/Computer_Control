@@ -121,13 +121,15 @@ public class Table implements Runnable{
 	public void updateTable() {
 		// currently static, change i < 3 when dynamically inputed through sockets. 
 		for(int i = 0; i < 1; i++) {
-			if((Integer) dataModel.getValueAt(i, 4) == -1) {
+			if((Integer) dataModel.getValueAt(i, 4) == -1 ) {
 				// need to get both start time and end time to calculate the time left
 				String endTime = (String) dataModel.getValueAt(i, 5); // end time
+				if(!endTime.equals("None Set")) {
+					timeRemain.setTimeLeft(endTime, time.getTime());
+					int timeLeft = timeRemain.getTimeLeft();
+					dataModel.setValueAt(timeLeft, i, 4);	
 
-				timeRemain.setTimeLeft(endTime, time.getTime());
-				int timeLeft = timeRemain.getTimeLeft();
-				dataModel.setValueAt(timeLeft, i, 4);	
+				}
 			}
 		}
 
