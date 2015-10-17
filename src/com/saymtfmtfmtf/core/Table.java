@@ -16,10 +16,7 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.TransferHandler;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
 public class Table implements Runnable{
@@ -182,10 +179,6 @@ public class Table implements Runnable{
 		        JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
 		        int colIndex = dl.getColumn(); // the col of where user let go of mouse
 		        int rowIndex = dl.getRow(); // the row of where user let go of mouse
-
-//		        boolean insertCol = dl.isInsertColumn();
-//		        boolean insertRow = dl.isInsertRow();
-//				System.out.println(colIndex + " " + rowIndex);
 
 			   // To query the data from the drop
 			   Transferable t = info.getTransferable();

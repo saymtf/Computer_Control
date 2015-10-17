@@ -214,7 +214,8 @@ public class InterfaceComponents{
 	 * @return
 	 */
 	public JScrollPane timeLabel() {
-		String[] times = {"10", "15", "30", "45", "60", "90", "120"};
+		//String[] times = {"10", "15", "30", "45", "60", "90", "120"};
+		Integer[] times = {10, 15, 30, 45, 60, 90, 120};
 
 		JList list = new JList(times);
 		list.setDragEnabled(true);
@@ -277,7 +278,7 @@ public class InterfaceComponents{
 	
 	public String[] getAccounts() {
 		
-		File file = new File("/Users/saymtfmtfmtf/Documents/workspace/SmartLauncherV3/acc.txt");
+		File file = new File("\\Users\\Thane\\workspace\\Computer_Control\\acc.txt");
 		try {
 			Scanner scnr = new Scanner(file);
 			while(scnr.hasNext()) {
@@ -289,7 +290,9 @@ public class InterfaceComponents{
 			scnr.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
+
 			System.out.println("Username Files Cannot be Found!");
+
 		}
 		
 		

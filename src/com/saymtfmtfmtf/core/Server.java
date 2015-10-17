@@ -15,7 +15,7 @@ public class Server {
 	
 	public void startServer() {
 		try {
-			server = new ServerSocket(6789, 100);
+			server = new ServerSocket(6769, 100);
 			while(true) {
 				waitForConnection();
 				setupStreams();
@@ -28,13 +28,16 @@ public class Server {
 	}
 	
 	private void waitForConnection() throws IOException {
+		System.out.println("Waiting For Connection..");
 		socket = server.accept();
 	}
 	
 	private void setupStreams() throws IOException {
 		output = new ObjectOutputStream(socket.getOutputStream());
+		System.out.println(output);
 		output.flush();
 		input = new ObjectInputStream(socket.getInputStream());
+		System.out.println("Connection Setting up");
 	}
 	
 	
