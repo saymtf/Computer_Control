@@ -113,7 +113,6 @@ public class Interface extends JFrame implements Runnable {
 		help = ic.menuHelp();
 		
 		spellSnake = "";
-
 		
 		
 	//Set the menu bar and add the label to the content panel
