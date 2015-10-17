@@ -176,46 +176,50 @@ public class Table implements Runnable{
 		   @Override
 		   public boolean importData(TransferSupport info) {
 			   if (!info.isDrop()) { return false; }
-			   	
+			   
+			   
 			    //getDropLocation Returns the component of the drop
 		        JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
 		        int colIndex = dl.getColumn(); // the col of where user let go of mouse
 		        int rowIndex = dl.getRow(); // the row of where user let go of mouse
-		        
+
 //		        boolean insertCol = dl.isInsertColumn();
 //		        boolean insertRow = dl.isInsertRow();
-//				System.out.println(colIndex + " " + rowIndex + " " + insertCol + " " + insertRow);
+//				System.out.println(colIndex + " " + rowIndex);
 
 			   // To query the data from the drop
 			   Transferable t = info.getTransferable();
 			   try {
 				   // getTransferData gets the data's information and store it
 				   String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-				   //System.out.println(data);
-				  
+				   //System.out.println("The Amount of Time " + data);
+
 				   // update the time in the table
-				   Integer val = (Integer) dataModel.getValueAt(rowIndex, colIndex);
+				   Integer val = (Integer) dataModel.getValueAt(rowIndex, colIndex); //// ****************** AFTER 1 DROP - STOPS WORKING *************//
+
 				   System.out.println(val);
 				   if(val == -1) {
 					   System.out.println("IF");
 						dataModel.setValueAt(data, rowIndex, colIndex);	
-				   }else {
-					   System.out.println("ELSE");
-					   int timeVal = Integer.parseInt(data);
-					  
 				   }
-				table.setModel(dataModel);
+					   
+				   System.out.println("ELSE");
+				   int timeVal = Integer.parseInt(data);
+				   System.out.println(timeVal);
+				   
+				   
+				   table.setModel(dataModel);
 				   table.setBackground(new Color(100,200,240));
 
 			        return true;
 			   } catch (UnsupportedFlavorException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return false;
+				   e.printStackTrace();
+				   return false;
 			   } catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return false;
+				   e.printStackTrace();
+				   return false;
 			   }
 		   }
 
