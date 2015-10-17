@@ -179,10 +179,6 @@ public class Table implements Runnable{
 		        int colIndex = dl.getColumn(); // the col of where user let go of mouse
 		        int rowIndex = dl.getRow(); // the row of where user let go of mouse
 		        
-//		        boolean insertCol = dl.isInsertColumn();
-//		        boolean insertRow = dl.isInsertRow();
-//				System.out.println(colIndex + " " + rowIndex + " " + insertCol + " " + insertRow);
-
 			   // To query the data from the drop
 			   Transferable t = info.getTransferable();
 			   try {

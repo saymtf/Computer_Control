@@ -46,7 +46,9 @@ public class Main {
 		//Time time = new Time();
 
 		Interface inter = new Interface();
+		Server server = new Server();
 		
+		server.startServer(); // Start Server
         //threadPoolExe.scheduleWithFixedDelay(time, 1, 1, TimeUnit.SECONDS);
         threadPoolExe.scheduleWithFixedDelay(inter, 1, 1, TimeUnit.SECONDS);
         
