@@ -5,9 +5,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DragSource;
-import java.io.IOException;
 
 import javax.activation.ActivationDataFlavor;
 import javax.activation.DataHandler;
@@ -16,22 +14,17 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.TransferHandler;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableModel;
 
-public class Table implements Runnable{
+public class Table implements Runnable {
 	private String[] header = { "PC", "Status", "User", "Start", "Time", "End" };
 	private Object[][] data;
 	private JTable jtable;
-	private TableModel dataModel;
+	private TableRowTransferHandler transferHandler;
 	private JScrollPane scroll;
 	private Time time;
 	private Time_Remaining timeRemain;
 	private String userType;
-	private TableRowTransferHandler transferHandler = null;
+	
 	/**
 	 * Sets all the member vals empty
 	 * Creates a new JTable and JScroll
@@ -145,7 +138,7 @@ public class Table implements Runnable{
 
 		jtable.setDragEnabled(true);
 		jtable.setDropMode(DropMode.INSERT_COLS);
-		jtable.setTransferHandler(transferHandler);	
+		jtable.setTransferHandler(new TableRowTransferHandler(jtable));	
 		scroll = new JScrollPane(jtable); // sets the new scroll obj
 
 		//updateTable();
@@ -164,6 +157,7 @@ public class Table implements Runnable{
 	 */
 	@SuppressWarnings("serial")
 	public class TableRowTransferHandler extends TransferHandler {
+
 		private final DataFlavor localObjectFlavor = new DataFlavor(Integer.class, "Integer Row Index");
 		private JTable           table             = null;
 
@@ -247,6 +241,7 @@ public class Table implements Runnable{
 				table.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 		}
-	}
+		
+}
 
 }
